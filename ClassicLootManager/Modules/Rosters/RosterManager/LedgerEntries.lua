@@ -30,11 +30,12 @@ local RosterBossKillBonus           = LogEntry:extend("RB")
 local RosterFieldRename             = LogEntry:extend("RF")
 local RosterAwardMultiplier         = LogEntry:extend("RM")
 
-local RosterDynamicItemValueEquation       = LogEntry:extend("VE")
-local RosterDynamicItemValueExpvar         = LogEntry:extend("VX")
-local RosterDynamicItemValueMultiplier     = LogEntry:extend("VM")
-local RosterDynamicItemValueSlotMultiplier = LogEntry:extend("VS")
-local RosterDynamicItemValueTierMultiplier = LogEntry:extend("VT")
+local RosterDynamicItemValueEquation            = LogEntry:extend("VE")
+local RosterDynamicItemValueExpvar              = LogEntry:extend("VX")
+local RosterDynamicItemValueCustomExpression    = LogEntry:extend("VC")
+local RosterDynamicItemValueMultiplier          = LogEntry:extend("VM")
+local RosterDynamicItemValueSlotMultiplier      = LogEntry:extend("VS")
+local RosterDynamicItemValueTierMultiplier      = LogEntry:extend("VT")
 
 -- ------------ --
 -- RosterCreate --
@@ -511,6 +512,30 @@ function RosterDynamicItemValueExpvar:fields()
     return RosterDynamicItemValueExpvarFields
 end
 
+-- ---------------------------- --
+-- RosterDynamicItemValueCustomExpression --
+-- ---------------------------- --
+function RosterDynamicItemValueCustomExpression:new(rosterUid, custom_expression)
+    local o = LogEntry.new(self);
+    o.r = tonumber(rosterUid) or 0
+    local lengthRestricted = string.sub(tostring(custom_expression or "0"), 1, ExpressionParser.MAX_EXPRESSION_LENGTH)
+    o.m = string.lower(lengthRestricted:gsub("%s+", ""))
+    return o
+end
+
+function RosterDynamicItemValueCustomExpression:rosterUid()
+    return self.r
+end
+
+function RosterDynamicItemValueCustomExpression:customExpression()
+    return self.m
+end
+
+local RosterDynamicItemValueCustomExpressionFields = mergeLists(LogEntry:fields(), {"r", "m"})
+function RosterDynamicItemValueCustomExpression:fields()
+    return RosterDynamicItemValueCustomExpressionFields
+end
+
 -- -------------------------------- --
 -- RosterDynamicItemValueMultiplier --
 -- -------------------------------- --
@@ -591,23 +616,24 @@ function RosterDynamicItemValueTierMultiplier:fields()
 end
 
 CLM.MODELS.LEDGER.ROSTER = {
-    Create                          = RosterCreate,
-    Delete                          = RosterDelete,
-    Rename                          = RosterRename,
-    UpdateConfig                    = RosterUpdateConfig,
-    UpdateConfigSingle              = RosterUpdateConfigSingle,
-    UpdateDefaultSingle             = RosterUpdateDefaultSingle,
-    UpdateOverrides                 = RosterUpdateOverrides,
-    UpdateOverridesSingle           = RosterUpdateOverridesSingle,
-    RemoveOverrides                 = RosterRemoveOverrides,
-    UpdateProfiles                  = RosterUpdateProfiles,
-    CopyData                        = RosterCopyData,
-    BossKillBonus                   = RosterBossKillBonus,
-    FieldRename                     = RosterFieldRename,
-    AwardMultiplier                 = RosterAwardMultiplier,
-    DynamicItemValueEquation        = RosterDynamicItemValueEquation,
-    DynamicItemValueExpvar          = RosterDynamicItemValueExpvar,
-    DynamicItemValueMultiplier      = RosterDynamicItemValueMultiplier,
-    DynamicItemValueSlotMultiplier  = RosterDynamicItemValueSlotMultiplier,
-    DynamicItemValueTierMultiplier  = RosterDynamicItemValueTierMultiplier
+    Create                              = RosterCreate,
+    Delete                              = RosterDelete,
+    Rename                              = RosterRename,
+    UpdateConfig                        = RosterUpdateConfig,
+    UpdateConfigSingle                  = RosterUpdateConfigSingle,
+    UpdateDefaultSingle                 = RosterUpdateDefaultSingle,
+    UpdateOverrides                     = RosterUpdateOverrides,
+    UpdateOverridesSingle               = RosterUpdateOverridesSingle,
+    RemoveOverrides                     = RosterRemoveOverrides,
+    UpdateProfiles                      = RosterUpdateProfiles,
+    CopyData                            = RosterCopyData,
+    BossKillBonus                       = RosterBossKillBonus,
+    FieldRename                         = RosterFieldRename,
+    AwardMultiplier                     = RosterAwardMultiplier,
+    DynamicItemValueEquation            = RosterDynamicItemValueEquation,
+    DynamicItemValueExpvar              = RosterDynamicItemValueExpvar,
+    DynamicItemValueCustomExpression    = RosterDynamicItemValueCustomExpression,
+    DynamicItemValueMultiplier          = RosterDynamicItemValueMultiplier,
+    DynamicItemValueSlotMultiplier      = RosterDynamicItemValueSlotMultiplier,
+    DynamicItemValueTierMultiplier      = RosterDynamicItemValueTierMultiplier
 }
